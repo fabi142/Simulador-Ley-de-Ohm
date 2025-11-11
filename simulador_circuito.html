@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador Ley de Ohm - Circuito de Casa</title>
+<style>
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: radial-gradient(circle, #0a0a0a 60%, #000);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+h1 {
+  margin-top: 15px;
+  text-shadow: 0 0 20px #00ffff;
+  font-size: 28px;
+}
+
+.container {
+  margin-top: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 0 25px #00ffff33;
+}
+
+input {
+  margin: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  text-align: center;
+  font-size: 16px;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 8px;
+  background: #00ffff;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 15px #00ffff;
+  transition: transform 0.2s, background 0.3s;
+}
+
+button:hover {
+  transform: scale(1.05);
+  background: #00cccc;
+}
+
+.resultado {
+  margin-top: 15px;
+  font-size: 20px;
+  text-shadow: 0 0 10px #00ffff;
+}
+
+.circuito {
+  position: relative;
+  width: 400px;
+  height: 250px;
+  margin-top: 40px;
+}
+
+/* Elementos del circuito */
+.cable {
+  position: absolute;
+  width: 4px;
+  background: gray;
+  transition: background 0.3s;
+}
+
+.cable1 {
+  height: 100px;
+  left: 100px;
+  top: 60px;
+}
+
+.cable2 {
+  height: 100px;
+  right: 100px;
+  top: 60px;
+}
+
+.pila {
+  position: absolute;
+  bottom: 0;
+  left: 160px;
+  width: 80px;
+  height: 50px;
+  background: linear-gradient(90deg, #333, #555);
+  border-radius: 8px;
+  box-shadow: 0 0 15px #00ffff;
+}
+
+.pila::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 30px;
+  width: 20px;
+  height: 8px;
+  background: gold;
+  border-radius: 3px;
+}
+
+.foco {
+  position: absolute;
+  top: 10px;
+  left: 170px;
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle at center, #111 70%, #000);
+  border-radius: 50%;
+  box-shadow: 0 0 25px #000;
+  transition: all 0.3s;
+}
+
+/* Efecto de explosión */
+.explosion {
+  animation: explotar 0.6s ease-out;
+}
+
+@keyframes explotar {
+  0% { box-shadow: 0 0 50px 20px yellow; background: white; }
+  50% { box-shadow: 0 0 200px 80px orange; background: red; }
+  100% { box-shadow: none; background: #111; }
+}
+
+/* Crédito */
+.credito {
+  text-align:center;
+  margin-top:20px;
+  color:#00ffff;
+  font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<h1>💡 Simulador de la Ley de Ohm - Circuito Doméstico</h1>
+
+<div class="container">
+  <label>Voltaje (V):</label>
+  <input type="number" id="voltaje" placeholder="Ej. 120"><br>
+  <label>Resistencia (Ω):</label>
+  <input type="number" id="resistencia" placeholder="Ej. 60"><br>
+  <button onclick="calcular()">Calcular Corriente</button>
+  <div class="resultado" id="resultado"></div>
+</div>
+
+<div class="circuito">
+  <div class="cable cable1"></div>
+  <div class="foco" id="foco"></div>
+  <div class="cable cable2"></div>
+  <div class="pila"></div>
+</div>
+
+<p class="credito">Elaborado por Fabián Chacón</p>
+
+<script>
+function calcular() {
+  const V = parseFloat(document.getElementById("voltaje").value);
+  const R = parseFloat(document.getElementById("resistencia").value);
+  const foco = document.getElementById("foco");
+  const cable1 = document.querySelector(".cable1");
+  const cable2 = document.querySelector(".cable2");
+  const resultado = document.getElementById("resultado");
+
+  if (isNaN(V) || isNaN(R) || R <= 0) {
+    alert("Por favor, ingresa valores válidos de voltaje y resistencia.");
+    return;
+  }
+
+  const I = V / R;
+  resultado.innerHTML = `Corriente: ${I.toFixed(2)} A`;
+
+  foco.classList.remove("explosion");
+
+  // comportamiento visual del foco
+  if (V === 0) {
+    foco.style.background = "radial-gradient(circle at center, #111 70%, #000)";
+    foco.style.boxShadow = "0 0 25px #000";
+    cable1.style.background = cable2.style.background = "gray";
+  } 
+  else if (V > 0 && V <= 60) {
+    foco.style.background = "radial-gradient(circle at center, #444, #fff799)";
+    foco.style.boxShadow = "0 0 30px 10px #fff799";
+    cable1.style.background = cable2.style.background = "#ffff66";
+  } 
+  else if (V > 60 && V <= 120) {
+    foco.style.background = "radial-gradient(circle at center, #fff, #ffcc00)";
+    foco.style.boxShadow = "0 0 50px 20px #ffcc00";
+    cable1.style.background = cable2.style.background = "#ffcc00";
+  } 
+  else if (V > 120) {
+    foco.classList.add("explosion");
+    setTimeout(() => {
+      foco.style.background = "radial-gradient(circle at center, #111 70%, #000)";
+      foco.style.boxShadow = "0 0 25px #000";
+      cable1.style.background = cable2.style.background = "gray";
+      alert("💥 ¡El foco se fundió por exceso de voltaje!");
+      resultado.innerHTML = "⚠️ El circuito se dañó por sobrevoltaje.";
+    }, 600);
+  }
+}
+</script>
+
+</body>
+</html>
